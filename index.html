@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Videojuego educativo de física: momento de inercia de una barra que gira alrededor de un extremo (I = ⅓·M·L²).">
+  <title>CANNON PHYSICS – La batalla del momento de inercia</title>
+  <!-- Fuentes (opcionales: si no hay internet se usan fuentes de respaldo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===================== MENÚ PRINCIPAL ===================== -->
+  <section id="screen-menu" class="screen active" aria-label="Menú principal">
+    <div class="menu-wrap">
+      <h1 class="game-title"><span class="t1">CANNON</span> <span class="t2">PHYSICS</span></h1>
+      <p class="subtitle">La batalla del momento de inercia</p>
+      <div class="menu-art">
+        <canvas id="menuCanvas" width="720" height="320" aria-label="Ilustración de un barco pirata con su cañón"></canvas>
+        <div class="formula-chip">I = ⅓ · M · L²</div>
+      </div>
+      <nav class="menu-buttons">
+        <button class="btn big" data-go="play">⚓ JUGAR</button>
+        <button class="btn" data-go="instructions">📜 INSTRUCCIONES</button>
+        <button class="btn" data-go="theory">🧭 FUNDAMENTOS DE FÍSICA</button>
+        <button class="btn" data-go="credits">🏴‍☠️ CRÉDITOS</button>
+      </nav>
+      <div class="sound-row">
+        <button class="btn small ghost" data-toggle="music">🎵 Música: ON</button>
+        <button class="btn small ghost" data-toggle="sfx">🔊 Efectos: ON</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== INSTRUCCIONES ===================== -->
+  <section id="screen-instructions" class="screen info-screen" aria-label="Instrucciones">
+    <div class="parchment">
+      <h2 class="sec-heading">📜 Instrucciones</h2>
+
+      <h3>🎯 Objetivo</h3>
+      <p>Eres el capitán de un barco pirata. Defiende tu embarcación hundiendo la flota enemiga con tu cañón giratorio. Pero hay un detalle: el cañón solo se desbloquea cuando resuelves correctamente el desafío de física, y <b>su forma de girar depende de su momento de inercia</b>.</p>
+
+      <h3>🎮 Controles</h3>
+      <table class="info-table">
+        <tr><th>← Flecha izquierda</th><td>Aplica torque para girar el cañón hacia <b>abajo</b></td></tr>
+        <tr><th>→ Flecha derecha</th><td>Aplica torque para girar el cañón hacia <b>arriba</b></td></tr>
+        <tr><th>Barra espaciadora</th><td>Disparar</td></tr>
+        <tr><th>P o Esc</th><td>Pausar / continuar</td></tr>
+        <tr><th>Botones ◀ 💥 ▶</th><td>Controles táctiles (móvil y tablet)</td></tr>
+        <tr><th>📋 ⏸ ↻</th><td>Panel de física, pausa y reiniciar nivel</td></tr>
+      </table>
+
+      <h3>⚙️ ¿Cómo se mueve el cañón?</h3>
+      <p>Mientras mantienes una flecha, aplicas el torque τ del cañón y este acelera con <b>α = τ / I</b>. Al soltar, el freno aplica el mismo torque en sentido contrario hasta detenerlo. Un cañón con mayor momento de inercia acelera y frena más despacio: ¡tendrás que anticipar tus movimientos!</p>
+
+      <h3>🗺️ Niveles</h3>
+      <ol class="level-list">
+        <li><b>Entrenamiento:</b> qué es el momento de inercia, ejemplo resuelto y primer ejercicio. Práctica con barriles.</li>
+        <li><b>Primer enfrentamiento:</b> calcula I y la aceleración angular α para desbloquear el cañón.</li>
+        <li><b>Selección de cañones:</b> elige el cañón con menor I para lograr mayor α con el mismo torque.</li>
+        <li><b>Batalla avanzada:</b> enemigos más rápidos a distintas distancias. Sin guía de apuntado.</li>
+        <li><b>Batalla final:</b> un buque insignia con escudos. Cada escudo cae con un desafío distinto.</li>
+      </ol>
+
+      <h3>🏆 Puntuación</h3>
+      <ul>
+        <li>Respuesta correcta: <b>+100</b> (y <b>+50</b> extra si es al primer intento). Respuesta incorrecta: <b>−20</b>.</li>
+        <li>Impacto: <b>+10</b> · Barril: <b>+50</b> · Barco hundido: <b>+150</b> · Buque insignia: <b>+500</b>.</li>
+        <li>Nivel completado: <b>+200</b>, más bonos por rapidez, por la vida restante y por no cometer errores (+150).</li>
+      </ul>
+
+      <h3>❤️ Vidas</h3>
+      <p>Tienes 3 vidas. Si hunden tu barco pierdes una y repites el nivel. Si te quedas sin vidas puedes continuar desde el último nivel: nunca quedas bloqueado.</p>
+
+      <div class="row center"><button class="btn" data-go="menu">⬅ Volver al menú</button></div>
+    </div>
+  </section>
+
+  <!-- ===================== FUNDAMENTOS DE FÍSICA ===================== -->
+  <section id="screen-theory" class="screen info-screen" aria-label="Fundamentos de física">
+    <div class="parchment">
+      <h2 class="sec-heading">🧭 Fundamentos de física</h2>
+
+      <h3>1. ¿Qué es el momento de inercia?</h3>
+      <p>El <b>momento de inercia (I)</b> mide la resistencia de un cuerpo a cambiar su movimiento de rotación. Es el equivalente rotacional de la masa: así como un objeto con más masa cuesta más empujarlo en línea recta, un objeto con más momento de inercia cuesta más hacerlo girar (o detenerlo). Su unidad en el SI es el <b>kg·m²</b>.</p>
+
+      <h3>2. ¿Para qué sirve?</h3>
+      <p>Permite predecir cómo responde un objeto a un torque: puertas, volantes de inercia, hélices, brazos robóticos, patinadores que recogen los brazos para girar más rápido… y, por supuesto, cañones giratorios.</p>
+
+      <h3>3. El eje de rotación</h3>
+      <p>Es la línea imaginaria alrededor de la cual gira el cuerpo. <b>El momento de inercia depende de dónde esté el eje</b>. En este juego el cañón se modela como una <b>barra uniforme</b> que gira alrededor de un eje <b>perpendicular</b> a ella y ubicado en <b>uno de sus extremos</b> (el punto dorado en la base del cañón).</p>
+      <div class="formula-box">I = ⅓ · M · L²</div>
+      <p class="small">Origen de la fórmula: con densidad lineal λ = M/L, I = ∫ r² dm = ∫₀ᴸ r² λ dr = λL³/3 = ⅓ML². Si el eje estuviera en el centro, la masa quedaría más cerca del eje e I = <sup>1</sup>&frasl;<sub>12</sub>ML² (cuatro veces menor).</p>
+
+      <h3>4. ¿Cómo influye la masa (M)?</h3>
+      <p>I es <b>directamente proporcional</b> a la masa: si la masa se duplica, el momento de inercia se duplica.</p>
+
+      <h3>5. ¿Cómo influye la longitud (L)?</h3>
+      <p>La longitud está <b>elevada al cuadrado</b>, así que su efecto es mucho mayor: la masa que está lejos del eje “cuenta más”.</p>
+      <table class="info-table compact">
+        <tr><th>Longitud</th><td>L</td><td>2L</td><td>3L</td><td>4L</td></tr>
+        <tr><th>Momento de inercia</th><td>I</td><td>4I</td><td>9I</td><td>16I</td></tr>
+      </table>
+
+      <h3>6. Torque y aceleración angular</h3>
+      <p>La segunda ley de Newton para la rotación es:</p>
+      <div class="formula-box">τ = I · α &nbsp;&nbsp;⟹&nbsp;&nbsp; α = τ / I</div>
+      <p><b>τ</b> es el torque (N·m), <b>I</b> el momento de inercia (kg·m²) y <b>α</b> la aceleración angular (rad/s²). Con el mismo torque, un cañón con mayor I acelera menos. Para lograr la misma α con un I mayor se necesita más torque.</p>
+      <p class="small">Unidades: N·m / (kg·m²) = (kg·m/s²·m)/(kg·m²) = 1/s² = rad/s² (el radián es adimensional). Desde el reposo, el tiempo para girar un ángulo θ es t = √(2θ/α).</p>
+
+      <h3>🧪 Laboratorio interactivo</h3>
+      <p>Mueve los controles y observa cómo cambia la rapidez con que la barra gira 90° desde el reposo.</p>
+      <div class="lab">
+        <canvas id="labCanvas" width="520" height="300" aria-label="Simulación de una barra girando alrededor de un extremo"></canvas>
+        <div class="lab-controls">
+          <label>Masa M: <b id="lab-M-v">6 kg</b><input type="range" id="lab-M" min="1" max="20" step="1" value="6"></label>
+          <label>Longitud L: <b id="lab-L-v">2 m</b><input type="range" id="lab-L" min="0.5" max="5" step="0.5" value="2"></label>
+          <label>Torque τ: <b id="lab-tau-v">10 N·m</b><input type="range" id="lab-tau" min="1" max="40" step="1" value="10"></label>
+          <div class="lab-out">
+            <div>I = ⅓ML² = <b id="lab-I">–</b></div>
+            <div>α = τ/I = <b id="lab-alpha">–</b></div>
+            <div>Tiempo para girar 90°: <b id="lab-t">–</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row center"><button class="btn" data-go="menu">⬅ Volver al menú</button></div>
+    </div>
+  </section>
+
+  <!-- ===================== CRÉDITOS ===================== -->
+  <section id="screen-credits" class="screen info-screen" aria-label="Créditos">
+    <div class="parchment narrow">
+      <h2 class="sec-heading">🏴‍☠️ Créditos</h2>
+      <p class="center"><b>CANNON PHYSICS: La batalla del momento de inercia</b></p>
+      <p class="center">Videojuego educativo sobre el momento de inercia de una barra que gira alrededor de uno de sus extremos.</p>
+      <table class="info-table">
+        <tr><th>Desarrollo</th><td>Juliana Zambrano · Universidad del Cauca</td></tr>
+        <tr><th>Tecnologías</th><td>HTML5, CSS3, JavaScript puro, Canvas 2D, Web Audio API</td></tr>
+        <tr><th>Gráficos</th><td>Dibujados por código en Canvas (sin imágenes externas)</td></tr>
+        <tr><th>Música y sonido</th><td>Sintetizados en tiempo real con Web Audio</td></tr>
+        <tr><th>Física</th><td>I = ⅓ML², τ = Iα, α = τ/I</td></tr>
+      </table>
+      <p class="center small">¡Que los vientos y los torques te sean favorables, capitán!</p>
+      <div class="row center"><button class="btn" data-go="menu">⬅ Volver al menú</button></div>
+    </div>
+  </section>
+
+  <!-- ===================== PANTALLA DE JUEGO ===================== -->
+  <section id="screen-game" class="screen" aria-label="Juego">
+    <header class="hud">
+      <div class="hud-block level-block">
+        <span class="hud-label">Nivel</span>
+        <span class="hud-value"><span id="hud-level">1</span> <small id="hud-level-name">Entrenamiento</small></span>
+      </div>
+      <div class="hud-block bars">
+        <div class="bar-row"><span class="bar-name">🚢 Tu barco</span><div class="bar"><div id="bar-player" class="bar-fill player"></div></div></div>
+        <div class="bar-row"><span class="bar-name">☠️ Enemigo</span><div class="bar"><div id="bar-enemy" class="bar-fill enemy"></div></div></div>
+      </div>
+      <div class="hud-block"><span class="hud-label">Puntos</span><span id="hud-score" class="hud-value">0</span></div>
+      <div class="hud-block"><span class="hud-label">Vidas</span><span id="hud-lives" class="hud-value">❤❤❤</span></div>
+      <div class="hud-block"><span class="hud-label">Tiempo</span><span id="hud-time" class="hud-value">00:00</span></div>
+      <div class="hud-actions">
+        <button class="icon-btn" id="btn-data" title="Panel de física" aria-label="Panel de física">📋</button>
+        <button class="icon-btn" data-toggle="music" title="Música" aria-label="Activar o desactivar música">🎵</button>
+        <button class="icon-btn" data-toggle="sfx" title="Efectos de sonido" aria-label="Activar o desactivar efectos">🔊</button>
+        <button class="icon-btn" id="btn-restart" title="Reiniciar nivel" aria-label="Reiniciar nivel">↻</button>
+        <button class="icon-btn" id="btn-pause" title="Pausa (P)" aria-label="Pausa">⏸</button>
+      </div>
+    </header>
+
+    <div class="stage" id="stage">
+      <div class="canvas-wrap" id="canvas-wrap">
+        <canvas id="gameCanvas" width="1280" height="720" aria-label="Escenario de batalla naval"></canvas>
+        <div id="toast" class="toast" role="status"></div>
+      </div>
+    </div>
+
+    <footer class="game-bottom">
+      <div class="controls">
+        <button class="ctrl-btn" id="ctrl-left" aria-label="Girar hacia abajo">◀<small>Bajar</small></button>
+        <button class="ctrl-btn fire" id="ctrl-fire" aria-label="Disparar">💥<small>Disparar</small></button>
+        <button class="ctrl-btn" id="ctrl-right" aria-label="Girar hacia arriba">▶<small>Subir</small></button>
+      </div>
+      <div class="live-physics" aria-label="Datos físicos en tiempo real">
+        <div class="lp"><span>M</span><b id="lp-M">–</b></div>
+        <div class="lp"><span>L</span><b id="lp-L">–</b></div>
+        <div class="lp"><span>τ</span><b id="lp-tau">–</b></div>
+        <div class="lp hl"><span>I = ⅓ML²</span><b id="lp-I">¿?</b></div>
+        <div class="lp hl"><span>α = τ/I</span><b id="lp-alpha">¿?</b></div>
+        <div class="lp"><span>θ</span><b id="lp-theta">–</b></div>
+        <div class="lp"><span>ω</span><b id="lp-omega">–</b></div>
+        <div class="lp state"><span>Estado</span><b id="lp-state">–</b></div>
+      </div>
+    </footer>
+  </section>
+
+  <!-- ===================== RESULTADOS ===================== -->
+  <section id="screen-results" class="screen info-screen" aria-label="Resultados">
+    <div class="parchment narrow results">
+      <h2 class="sec-heading" id="res-title">🏆 ¡Victoria!</h2>
+      <div class="grade-badge"><span id="res-grade">A</span><small id="res-grade-label">Capitán experto</small></div>
+      <table class="info-table results-table">
+        <tr><th>Puntuación total</th><td id="res-score">0</td></tr>
+        <tr><th>Niveles completados</th><td id="res-levels">0 / 5</td></tr>
+        <tr><th>Respuestas correctas</th><td id="res-correct">0</td></tr>
+        <tr><th>Respuestas incorrectas</th><td id="res-wrong">0</td></tr>
+        <tr><th>Precisión</th><td id="res-acc">0%</td></tr>
+        <tr><th>Tiempo total</th><td id="res-time">00:00</td></tr>
+        <tr><th>Calificación final</th><td id="res-note">0.0 / 5.0</td></tr>
+      </table>
+      <div class="row center wrap">
+        <button class="btn hidden" id="res-continue">↪ Continuar desde el nivel <span id="res-continue-lvl">1</span></button>
+        <button class="btn" id="res-again">⚓ Jugar de nuevo</button>
+        <button class="btn ghost" id="res-menu">🏠 Menú principal</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Ventana modal (desafíos, explicaciones, transiciones de nivel) -->
+<div id="overlay" class="overlay" aria-hidden="true">
+  <div id="modal" class="modal" role="dialog" aria-modal="true"></div>
+</div>
+
+<!-- Pausa (capa independiente para no perder el desafío abierto) -->
+<div id="pause-overlay" class="overlay pause-layer" aria-hidden="true">
+  <div class="modal pause-card" role="dialog" aria-modal="true">
+    <h2>⏸ Pausa</h2>
+    <p>El tiempo y los enemigos están detenidos.</p>
+    <div class="col">
+      <button class="btn big" id="p-resume">▶ Continuar</button>
+      <button class="btn" id="p-restart">↻ Reiniciar nivel</button>
+      <button class="btn small ghost" data-toggle="music">🎵 Música: ON</button>
+      <button class="btn small ghost" data-toggle="sfx">🔊 Efectos: ON</button>
+      <button class="btn ghost" id="p-menu">🏠 Menú principal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Transición entre pantallas -->
+<div id="fader" class="fader"></div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
